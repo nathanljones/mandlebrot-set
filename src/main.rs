@@ -5,7 +5,6 @@ const WIDTH: u32 = 3;
 const XSTART: f32 = -2.0;
 const YSTART: f32 = -1.5;
 const PIXEL_SCALE:u32 = SCREENSIZE/ WIDTH;
-
 #[macroquad::main(window_conf)]
 async fn main() {
     #[derive(Eq, Hash, PartialEq)]
@@ -56,19 +55,30 @@ fn calculate_pixel(pixel_x: u32, pixel_y: u32) -> Color {
         x = xtemp;
         iteration += 1;
     }
-    
-    match iteration {
-        1000 => BLACK,
-        40..1000 => BLUE,
-        32..40=>SKYBLUE,
-        26..32=> WHITE,
-        18..26 => YELLOW,
-        15..18=> ORANGE,
-        12..15=> RED,
-        9..12 =>ORANGE,
-        7..9 =>YELLOW,
-        6..7=>RED,
-        1..4=>BLUE,
-        _ => SKYBLUE,
+
+    if iteration == max_iteration {
+        return BLACK;
+    }
+    if iteration == 0 {
+        return BLACK
+    }
+    match iteration % 16 {
+        0 => Color::from_rgba(66, 30, 15,255),
+        1 => Color::from_rgba(25, 7, 26,255),
+        2 => Color::from_rgba(9, 1, 47,255),
+        3 => Color::from_rgba(4, 4, 73,255),
+        4 => Color::from_rgba(0, 7, 100,255),
+        5 => Color::from_rgba(12, 44, 138,255),
+        6 => Color::from_rgba(24, 82, 177,255),
+        7 => Color::from_rgba(57, 125, 209,255),
+        8 => Color::from_rgba(134, 181, 229,255),
+        9 => Color::from_rgba(211, 236, 248,255),
+        10 => Color::from_rgba(241, 233, 191,255),
+        11 => Color::from_rgba(248, 201, 95,255),
+        12 => Color::from_rgba(255, 170, 0,255),
+        13 => Color::from_rgba(204, 128, 0,255),
+        14 => Color::from_rgba(153, 87, 0,255),
+        15 => Color::from_rgba(106, 52, 3,255),
+        _ => BLACK,
     }
 }
