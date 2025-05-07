@@ -1,6 +1,5 @@
 use itertools::Itertools;
 use macroquad::prelude::*;
-use std::collections::HashMap;
 use rayon::prelude::*;
 
 const SCREENSIZE: u32 = 900;
@@ -15,14 +14,31 @@ async fn main() {
         x: u32,
         y: u32,
     }
-    let points: HashMap<Pixel, Color> = (0..SCREENSIZE)
+
+    struct Point {
+        pixel: Pixel,
+        colour: Color,
+    }
+    
+    let points: Vec<Point> = (0..SCREENSIZE)
         .cartesian_product(0..SCREENSIZE).par_bridge()
-        .map(|(x, y)| (Pixel { x, y }, calculate_pixel(x, y)))
+        .map(|(x, y)| {
+            Point {
+                pixel: Pixel { x, y },
+                colour: calculate_pixel(x, y),
+            }
+        })
         .collect();
 
     loop {
-        points.iter().for_each(|(pixel, color)| {
-            draw_rectangle(pixel.x as f32, pixel.y as f32, 1.0, 1.0, *color);
+        points.iter().for_each(|point| {
+            draw_rectangle(
+                point.pixel.x as f32,
+                point.pixel.y as f32,
+                1.0,
+                1.0,
+                point.colour,
+            );
         });
         next_frame().await
     }
