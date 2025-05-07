@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use macroquad::prelude::*;
 use std::collections::HashMap;
+use rayon::prelude::*;
 
 const SCREENSIZE: u32 = 900;
 const WIDTH: u32 = 3;
@@ -15,7 +16,7 @@ async fn main() {
         y: u32,
     }
     let points: HashMap<Pixel, Color> = (0..SCREENSIZE)
-        .cartesian_product(0..SCREENSIZE)
+        .cartesian_product(0..SCREENSIZE).par_bridge()
         .map(|(x, y)| (Pixel { x, y }, calculate_pixel(x, y)))
         .collect();
 
