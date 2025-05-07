@@ -8,19 +8,18 @@ const XSTART: f32 = -2.0; // Graph starts at -2x
 const YSTART: f32 = -1.5; // Graph ends at -1.5
 const PIXEL_SCALE: u32 = SCREENSIZE / WIDTH; // Scale the graph to the screen
 
+struct Pixel {
+    x: u32,
+    y: u32,
+}
+
+struct Point {
+    pixel: Pixel,
+    colour: Color,
+}
+
 #[macroquad::main(window_conf)]
 async fn main() {
-    #[derive(Eq, Hash, PartialEq)]
-    struct Pixel {
-        x: u32,
-        y: u32,
-    }
-
-    struct Point {
-        pixel: Pixel,
-        colour: Color,
-    }
-
     let points: Vec<Point> = (0..SCREENSIZE)
         .cartesian_product(0..SCREENSIZE)
         .par_bridge()
