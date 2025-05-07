@@ -2,11 +2,12 @@ use itertools::Itertools;
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
-const SCREENSIZE: u32 = 900;
-const WIDTH: u32 = 3;
-const XSTART: f32 = -2.0;
-const YSTART: f32 = -1.5;
-const PIXEL_SCALE: u32 = SCREENSIZE / WIDTH;
+const SCREENSIZE: u32 = 900; // Pixel size of screen (will be square so only need one value
+const WIDTH: u32 = 3; // Width of the graph (3 units)
+const XSTART: f32 = -2.0; // Graph starts at -2x
+const YSTART: f32 = -1.5; // Graph ends at -1.5
+const PIXEL_SCALE: u32 = SCREENSIZE / WIDTH; // Scale the graph to the screen
+
 #[macroquad::main(window_conf)]
 async fn main() {
     #[derive(Eq, Hash, PartialEq)]
@@ -19,14 +20,13 @@ async fn main() {
         pixel: Pixel,
         colour: Color,
     }
-    
+
     let points: Vec<Point> = (0..SCREENSIZE)
-        .cartesian_product(0..SCREENSIZE).par_bridge()
-        .map(|(x, y)| {
-            Point {
-                pixel: Pixel { x, y },
-                colour: calculate_pixel(x, y),
-            }
+        .cartesian_product(0..SCREENSIZE)
+        .par_bridge()
+        .map(|(x, y)| Point {
+            pixel: Pixel { x, y },
+            colour: calculate_pixel(x, y),
         })
         .collect();
 
@@ -59,9 +59,11 @@ fn calculate_pixel(pixel_x: u32, pixel_y: u32) -> Color {
     let mut iteration = 0;
     let max_iteration = 1000;
 
+    // Convert the pixel value to the graph value
     let x0 = XSTART + pixel_x as f32 / PIXEL_SCALE as f32;
     let y0 = YSTART + pixel_y as f32 / PIXEL_SCALE as f32;
 
+    // Main calculation for a point on the Mandlebrot set
     while x.powf(2f32) + y.powf(2f32) <= 4f32 && iteration < max_iteration {
         xtemp = x.powf(2f32) - y.powf(2f32) + x0;
         y = 2f32 * x * y + y0;
@@ -69,6 +71,8 @@ fn calculate_pixel(pixel_x: u32, pixel_y: u32) -> Color {
         iteration += 1;
     }
 
+    // the next section just converts the number of iterations into a colour to make
+    // it look pretty
     if iteration == max_iteration {
         return BLACK;
     }
